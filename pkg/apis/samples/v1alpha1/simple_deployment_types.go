@@ -54,21 +54,17 @@ var (
 
 // SimpleDeploymentSpec holds the desired state of the SimpleDeployment (from the client).
 type SimpleDeploymentSpec struct {
-	Image    string `json:"image"`
-	Replicas int32  `json:"replicas"`
 }
 
 const (
-	// SimpleDeploymentConditionReady is set when the revision is starting to materialize
-	// runtime resources, and becomes true when those resources are ready.
-	SimpleDeploymentConditionReady = apis.ConditionReady
+	TaskrunSucceeded               apis.ConditionType = "TaskRunSucceeded"
+	SimpleDeploymentConditionReady                    = apis.ConditionReady
 )
 
 // SimpleDeploymentStatus communicates the observed state of the SimpleDeployment (from the controller).
 type SimpleDeploymentStatus struct {
 	duckv1.Status `json:",inline"`
-
-	ReadyReplicas int32 `json:"readyReplicas"`
+	TaskRunName   string `json:"taskRun,inline"`
 }
 
 // SimpleDeploymentList is a list of AddressableService resources
@@ -84,4 +80,16 @@ type SimpleDeploymentList struct {
 // GetStatus retrieves the status of the resource. Implements the KRShaped interface.
 func (d *SimpleDeployment) GetStatus() *duckv1.Status {
 	return &d.Status.Status
+}
+
+func (d *SimpleDeployment) GetNamespace() string {
+	return d.Namespace
+}
+
+func (d *SimpleDeployment) SetNamespace(namespace string) {
+	d.Namespace = namespace
+}
+
+func (d *SimpleDeployment) GetName() string {
+	return d.Name
 }

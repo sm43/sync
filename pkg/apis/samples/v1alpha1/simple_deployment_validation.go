@@ -29,8 +29,6 @@ func (d *SimpleDeployment) Validate(ctx context.Context) *apis.FieldError {
 
 // Validate implements apis.Validatable
 func (ds *SimpleDeploymentSpec) Validate(ctx context.Context) *apis.FieldError {
-	if ds.Image == "" {
-		return apis.ErrMissingField("image")
-	}
+
 	return nil
 }

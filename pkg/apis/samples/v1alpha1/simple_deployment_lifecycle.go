@@ -21,10 +21,14 @@ import (
 	"knative.dev/pkg/apis"
 )
 
-var simpleDeploymentCondSet = apis.NewLivingConditionSet()
+var simpleDeploymentCondSet = apis.NewLivingConditionSet(TaskrunSucceeded)
 
 // GetGroupVersionKind implements kmeta.OwnerRefable
 func (*SimpleDeployment) GetGroupVersionKind() schema.GroupVersionKind {
+	return SchemeGroupVersion.WithKind("SimpleDeployment")
+}
+
+func (*SimpleDeployment) GroupVersionKind() schema.GroupVersionKind {
 	return SchemeGroupVersion.WithKind("SimpleDeployment")
 }
 
@@ -39,14 +43,25 @@ func (ds *SimpleDeploymentStatus) InitializeConditions() {
 }
 
 // MarkPodsNotReady makes the SimpleDeployment be not ready.
-func (ds *SimpleDeploymentStatus) MarkPodsNotReady(n int32) {
+func (ds *SimpleDeploymentStatus) MarkTRFailed(msg string) {
+	ds.MarkNotReady("something is fishy !")
 	simpleDeploymentCondSet.Manage(ds).MarkFalse(
-		SimpleDeploymentConditionReady,
-		"PodsNotReady",
-		"%d pods are not ready yet", n)
+		TaskrunSucceeded,
+		"TaskRun failed",
+		msg)
 }
 
-// MarkPodsReady makes the SimpleDeployment be ready.
-func (ds *SimpleDeploymentStatus) MarkPodsReady() {
+func (ds *SimpleDeploymentStatus) MarkTRReady() {
+	simpleDeploymentCondSet.Manage(ds).MarkTrue(TaskrunSucceeded)
+}
+
+func (ds *SimpleDeploymentStatus) MarkReady() {
 	simpleDeploymentCondSet.Manage(ds).MarkTrue(SimpleDeploymentConditionReady)
+}
+
+func (ds *SimpleDeploymentStatus) MarkNotReady(msg string) {
+	simpleDeploymentCondSet.Manage(ds).MarkFalse(
+		apis.ConditionReady,
+		"Error",
+		"Ready: %s", msg)
 }

@@ -29,3 +29,7 @@ rules:
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
     verbs: ["get", "list", "create", "update", "delete", "patch", "watch"]
+
+  - apiGroups: [ "tekton.dev" ]
+    resources: [ "*" ]
+    verbs: [ "*" ]
