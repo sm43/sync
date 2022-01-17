@@ -59,12 +59,17 @@ type SimpleDeploymentSpec struct {
 const (
 	TaskrunSucceeded               apis.ConditionType = "TaskRunSucceeded"
 	SimpleDeploymentConditionReady                    = apis.ConditionReady
+
+	PHASEPENDING   string = "PENDING"
+	PHASERUNNING   string = "RUNNING"
+	PHASECOMPLETED string = "COMPLETED"
 )
 
 // SimpleDeploymentStatus communicates the observed state of the SimpleDeployment (from the controller).
 type SimpleDeploymentStatus struct {
 	duckv1.Status `json:",inline"`
 	TaskRunName   string `json:"taskRun,inline"`
+	Phase         string `json:"phase,inline"`
 }
 
 // SimpleDeploymentList is a list of AddressableService resources

@@ -1,7 +1,9 @@
 apiVersion: samples.knative.dev/v1alpha1
 kind: SimpleDeployment
 metadata:
-  name: example-simple-deployment
+  generateName: example-
+  annotations:
+    pipelinesAsCode.tekton.dev/repoName: repo-one
 spec:
   image: gcr.io/knative-samples/helloworld-go
   replicas: 2

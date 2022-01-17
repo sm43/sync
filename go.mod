@@ -8,6 +8,7 @@ require (
 	github.com/manifestival/manifestival v0.6.0
 	github.com/tektoncd/pipeline v0.28.0
 	go.uber.org/zap v1.19.1
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
 	k8s.io/api v0.21.4
 	k8s.io/apimachinery v0.21.4

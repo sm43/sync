@@ -18,8 +18,10 @@ package simpledeployment
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-logr/zapr"
 	mfc "github.com/manifestival/client-go-client"
@@ -30,6 +32,7 @@ import (
 	"knative.dev/pkg/controller"
 	"knative.dev/pkg/injection"
 	"knative.dev/pkg/logging"
+	v1alpha12 "knative.dev/sample-controller/pkg/client/informers/externalversions/samples/v1alpha1"
 
 	pipClient "github.com/tektoncd/pipeline/pkg/client/injection/client"
 	taskruninformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/taskrun"
@@ -37,6 +40,7 @@ import (
 	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
 	simpledeploymentinformer "knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/simpledeployment"
 	simpledeploymentreconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
+	"knative.dev/sample-controller/pkg/sync"
 )
 
 // NewController creates a Reconciler and returns the result of NewImpl.
@@ -88,6 +92,7 @@ func NewController(
 	impl := simpledeploymentreconciler.NewImpl(ctx, r)
 
 	r.enqueueAfter = impl.EnqueueAfter
+	r.syncer = initSyncManager(impl.Enqueue, simpledeploymentinformer.Get(ctx))
 
 	simpledeploymentInformer.Informer().AddEventHandler(controller.HandleAll(impl.Enqueue))
 
@@ -97,4 +102,33 @@ func NewController(
 	})
 
 	return impl
+}
+
+var freq = map[string]int{
+	"repo-abc": 3,
+	"repo-xyz": 2,
+	"repo-one": 1,
+}
+
+func initSyncManager(nextSD sync.NextSD, informer v1alpha12.SimpleDeploymentInformer) *sync.Manager {
+	getSyncLimit := func(lockKey string) (int, error) {
+		arr := strings.Split(lockKey, "/")
+		fmt.Println("arr element = ", arr[1])
+		limit, ok := freq[arr[1]]
+		if ok {
+			return limit, nil
+		}
+		return 0, nil
+	}
+
+	isSDDeleted := func(key string) bool {
+		_, exists, err := informer.Informer().GetIndexer().GetByKey(key)
+		if err != nil {
+			fmt.Println("failed to get SD by informer")
+			return false
+		}
+		return exists
+	}
+
+	return sync.NewLockManager(getSyncLimit, nextSD, isSDDeleted)
 }

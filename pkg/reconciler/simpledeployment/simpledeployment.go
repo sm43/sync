@@ -18,6 +18,7 @@ package simpledeployment
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	mf "github.com/manifestival/manifestival"
@@ -31,17 +32,13 @@ import (
 	"knative.dev/pkg/apis"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/reconciler"
+	"knative.dev/sample-controller/pkg/sync"
 
-	samplesv1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
+	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
 	simpledeploymentreconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
 )
 
 var reconcileDuration = 10 * time.Second
-
-//var freq = map[string]int64{
-//	"repo-abc": 3,
-//	"repo-xyz": 2,
-//}
 
 type Reconciler struct {
 	kubeclient    kubernetes.Interface
@@ -49,22 +46,40 @@ type Reconciler struct {
 	manifest      *mf.Manifest
 	tektonClient  versioned.Interface
 	enqueueAfter  func(obj interface{}, after time.Duration)
+	syncer        *sync.Manager
 }
 
 // Check that our Reconciler implements Interface
 var _ simpledeploymentreconciler.Interface = (*Reconciler)(nil)
 
 // ReconcileKind implements Interface.ReconcileKind.
-func (r *Reconciler) ReconcileKind(ctx context.Context, d *samplesv1alpha1.SimpleDeployment) reconciler.Event {
+func (r *Reconciler) ReconcileKind(ctx context.Context, d *v1alpha1.SimpleDeployment) reconciler.Event {
 	logger := logging.FromContext(ctx)
 
 	logger.Info("Reconciling for ", d.Name)
 
-	// check if taskRun exist with name of simple deployment
+	acquire, _, msg, err := r.syncer.TryAcquire(d)
+	if err != nil {
+		fmt.Println("Error at start := err ", err)
+		return nil
+	}
 
+	if !acquire {
+		d.Status.Phase = v1alpha1.PHASEPENDING
+		fmt.Println("dude no lock available, come back later !", msg)
+		r.enqueueAfter(d, reconcileDuration)
+		return nil
+	}
+
+	fmt.Println("acquired lock - ", d.Name)
+
+	d.Status.Phase = v1alpha1.PHASERUNNING
+
+	// check if taskRun exist with name of simple deployment
 	taskrun, err := r.tektonClient.TektonV1beta1().TaskRuns(d.Namespace).Get(ctx, d.Name, v1.GetOptions{})
 	if err != nil && !errors.IsNotFound(err) {
 		logger.Error("failed to get taskRun ", err)
+		return err
 	}
 
 	// not found err
@@ -105,11 +120,17 @@ func (r *Reconciler) ReconcileKind(ctx context.Context, d *samplesv1alpha1.Simpl
 
 	d.Status.MarkReady()
 
+	// release the lock for next one
+	r.syncer.Release(d)
+
+	d.Status.Phase = v1alpha1.PHASECOMPLETED
+
 	logger.Info("Reconciling completed for ", d.Name)
+
 	return nil
 }
 
-func (r *Reconciler) transformer(d *samplesv1alpha1.SimpleDeployment) (trns mf.Manifest, err error) {
+func (r *Reconciler) transformer(d *v1alpha1.SimpleDeployment) (trns mf.Manifest, err error) {
 
 	trns, err = r.manifest.Transform(mf.InjectNamespace(d.Namespace), mf.InjectOwner(d), injectName(d.GetName()))
 	if err != nil {
