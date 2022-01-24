@@ -83,10 +83,9 @@ func NewController(
 	}
 
 	r := &Reconciler{
-		kubeclient:    kubeclient.Get(ctx),
-		taskRunLister: taskrunInformer.Lister(),
-		manifest:      &manifest,
-		tektonClient:  pipClient.Get(ctx),
+		kubeclient:   kubeclient.Get(ctx),
+		manifest:     &manifest,
+		tektonClient: pipClient.Get(ctx),
 	}
 
 	impl := simpledeploymentreconciler.NewImpl(ctx, r)

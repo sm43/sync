@@ -23,7 +23,6 @@ import (
 
 	mf "github.com/manifestival/manifestival"
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
-	v1beta1Taskrun "github.com/tektoncd/pipeline/pkg/client/listers/pipeline/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -32,21 +31,19 @@ import (
 	"knative.dev/pkg/apis"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/reconciler"
-	"knative.dev/sample-controller/pkg/sync"
-
 	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
 	simpledeploymentreconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
+	"knative.dev/sample-controller/pkg/sync"
 )
 
 var reconcileDuration = 10 * time.Second
 
 type Reconciler struct {
-	kubeclient    kubernetes.Interface
-	taskRunLister v1beta1Taskrun.TaskRunLister
-	manifest      *mf.Manifest
-	tektonClient  versioned.Interface
-	enqueueAfter  func(obj interface{}, after time.Duration)
-	syncer        *sync.Manager
+	kubeclient   kubernetes.Interface
+	manifest     *mf.Manifest
+	tektonClient versioned.Interface
+	enqueueAfter func(obj interface{}, after time.Duration)
+	syncer       *sync.Manager
 }
 
 // Check that our Reconciler implements Interface
@@ -75,37 +72,37 @@ func (r *Reconciler) ReconcileKind(ctx context.Context, d *v1alpha1.SimpleDeploy
 
 	d.Status.Phase = v1alpha1.PHASERUNNING
 
-	// check if taskRun exist with name of simple deployment
-	taskrun, err := r.tektonClient.TektonV1beta1().TaskRuns(d.Namespace).Get(ctx, d.Name, v1.GetOptions{})
+	// check if pipelineRun exist with name of simple deployment
+	pipelineRun, err := r.tektonClient.TektonV1beta1().PipelineRuns(d.Namespace).Get(ctx, d.Name, v1.GetOptions{})
 	if err != nil && !errors.IsNotFound(err) {
-		logger.Error("failed to get taskRun ", err)
+		logger.Error("failed to get pipelineRun ", err)
 		return err
 	}
 
 	// not found err
 	if err != nil {
-		//create taskRun
+		//create pipelineRun
 		trns, err := r.transformer(d)
 		if err != nil {
 			logger.Error("failed to transformed manifest ", err)
 		}
 
-		logger.Info("creating taskRun for sd: ", d.Name)
+		logger.Info("creating pipelineRun for sd: ", d.Name)
 		if err := trns.Apply(); err != nil {
 			logger.Error("failed to apply ", err)
 			return err
 		}
-		logger.Info("created taskRun for sd: ", d.Name)
+		logger.Info("created pipelineRun for sd: ", d.Name)
 
 		return nil
 	}
 
-	logger.Info("Checking status of TaskRun for SD ", d.Name)
+	logger.Info("Checking status of pipelineRun for SD ", d.Name)
 
 	// found then check status
-	succeeded := taskrun.Status.GetCondition(apis.ConditionSucceeded)
+	succeeded := pipelineRun.Status.GetCondition(apis.ConditionSucceeded)
 	if succeeded == nil {
-		logger.Info("waiting for taskRun to complete")
+		logger.Info("waiting for pipelineRun to complete")
 		r.enqueueAfter(d, reconcileDuration)
 		return nil
 	}
@@ -113,7 +110,7 @@ func (r *Reconciler) ReconcileKind(ctx context.Context, d *v1alpha1.SimpleDeploy
 	if succeeded.Status == corev1.ConditionTrue {
 		d.Status.MarkTRReady()
 	} else {
-		logger.Info("waiting for taskRun to complete")
+		logger.Info("waiting for pipelineRun to complete")
 		r.enqueueAfter(d, reconcileDuration)
 		return nil
 	}

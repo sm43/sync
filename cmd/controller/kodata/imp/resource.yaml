@@ -1,21 +1,32 @@
 apiVersion: tekton.dev/v1beta1
-kind: TaskRun
+kind: PipelineRun
 metadata:
   name: hello
 spec:
-  taskSpec:
+  params:
+    - name: say-what
+      value: "hello"
+    - name: pause-duration
+      value: "30"
+  pipelineSpec:
     params:
       - name: say-what
-        description: What should I say
-        default: "hello"
-        type: string
       - name: pause-duration
-        description: How long to wait before saying something
-        default: "30"
-        type: string
-    steps:
-      - name: say-it
-        image: registry.access.redhat.com/ubi8/ubi
-        command:
-          - /bin/bash
-        args: ['-c', 'sleep $(params.pause-duration) && echo $(params.say-what)']
+    tasks:
+      - name: hello
+        taskSpec:
+          params:
+            - name: say-what
+              description: What should I say
+              default: "hello"
+              type: string
+            - name: pause-duration
+              description: How long to wait before saying something
+              default: "30"
+              type: string
+          steps:
+            - name: say-it
+              image: registry.access.redhat.com/ubi8/ubi
+              command:
+                - /bin/bash
+              args: ['-c', 'sleep $(params.pause-duration) && echo $(params.say-what)']
