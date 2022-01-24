@@ -17,7 +17,7 @@ limitations under the License.
 package main
 
 import (
-	"knative.dev/sample-controller/pkg/reconciler/simpledeployment"
+	"github.com/sm43/sync/pkg/reconciler/simpledeployment"
 
 	// This defines the shared main for injected controllers.
 	"knative.dev/pkg/injection/sharedmain"

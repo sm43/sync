@@ -22,14 +22,14 @@ import (
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	corev1listers "k8s.io/client-go/listers/core/v1"
 
+	samplesv1alpha1 "github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	addressableservicereconciler "github.com/sm43/sync/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice"
 	"knative.dev/pkg/apis"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/network"
 	"knative.dev/pkg/reconciler"
 	"knative.dev/pkg/tracker"
-	samplesv1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	addressableservicereconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice"
 )
 
 // Reconciler implements addressableservicereconciler.Interface for

@@ -19,9 +19,9 @@ limitations under the License.
 package v1alpha1
 
 import (
+	v1alpha1 "github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	"github.com/sm43/sync/pkg/client/clientset/versioned/scheme"
 	rest "k8s.io/client-go/rest"
-	v1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	"knative.dev/sample-controller/pkg/client/clientset/versioned/scheme"
 )
 
 type SamplesV1alpha1Interface interface {

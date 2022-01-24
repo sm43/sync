@@ -22,14 +22,14 @@ import (
 	"context"
 	time "time"
 
+	samplesv1alpha1 "github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	versioned "github.com/sm43/sync/pkg/client/clientset/versioned"
+	internalinterfaces "github.com/sm43/sync/pkg/client/informers/externalversions/internalinterfaces"
+	v1alpha1 "github.com/sm43/sync/pkg/client/listers/samples/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
-	samplesv1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	versioned "knative.dev/sample-controller/pkg/client/clientset/versioned"
-	internalinterfaces "knative.dev/sample-controller/pkg/client/informers/externalversions/internalinterfaces"
-	v1alpha1 "knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1"
 )
 
 // SimpleDeploymentInformer provides access to a shared informer and lister for

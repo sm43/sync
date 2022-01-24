@@ -21,11 +21,11 @@ package fake
 import (
 	context "context"
 
+	factoryfiltered "github.com/sm43/sync/pkg/client/injection/informers/factory/filtered"
+	filtered "github.com/sm43/sync/pkg/client/injection/informers/samples/v1alpha1/addressableservice/filtered"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 	logging "knative.dev/pkg/logging"
-	factoryfiltered "knative.dev/sample-controller/pkg/client/injection/informers/factory/filtered"
-	filtered "knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/addressableservice/filtered"
 )
 
 var Get = filtered.Get

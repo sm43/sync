@@ -26,21 +26,21 @@ import (
 	"github.com/go-logr/zapr"
 	mfc "github.com/manifestival/client-go-client"
 	mf "github.com/manifestival/manifestival"
+	v1alpha12 "github.com/sm43/sync/pkg/client/informers/externalversions/samples/v1alpha1"
 	"go.uber.org/zap"
 	"k8s.io/client-go/tools/cache"
 	"knative.dev/pkg/configmap"
 	"knative.dev/pkg/controller"
 	"knative.dev/pkg/injection"
 	"knative.dev/pkg/logging"
-	v1alpha12 "knative.dev/sample-controller/pkg/client/informers/externalversions/samples/v1alpha1"
 
+	"github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	simpledeploymentinformer "github.com/sm43/sync/pkg/client/injection/informers/samples/v1alpha1/simpledeployment"
+	simpledeploymentreconciler "github.com/sm43/sync/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
+	"github.com/sm43/sync/pkg/sync"
 	pipClient "github.com/tektoncd/pipeline/pkg/client/injection/client"
 	taskruninformer "github.com/tektoncd/pipeline/pkg/client/injection/informers/pipeline/v1beta1/taskrun"
 	kubeclient "knative.dev/pkg/client/injection/kube/client"
-	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	simpledeploymentinformer "knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/simpledeployment"
-	simpledeploymentreconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
-	"knative.dev/sample-controller/pkg/sync"
 )
 
 // NewController creates a Reconciler and returns the result of NewImpl.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
+	"github.com/sm43/sync/pkg/apis/samples/v1alpha1"
 )
 
 type LockName struct {

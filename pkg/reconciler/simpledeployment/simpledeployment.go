@@ -22,6 +22,9 @@ import (
 	"time"
 
 	mf "github.com/manifestival/manifestival"
+	"github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	simpledeploymentreconciler "github.com/sm43/sync/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
+	"github.com/sm43/sync/pkg/sync"
 	"github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -31,9 +34,6 @@ import (
 	"knative.dev/pkg/apis"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/reconciler"
-	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	simpledeploymentreconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/simpledeployment"
-	"knative.dev/sample-controller/pkg/sync"
 )
 
 var reconcileDuration = 10 * time.Second

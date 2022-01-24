@@ -24,6 +24,9 @@ import (
 	errors "errors"
 	fmt "fmt"
 
+	v1alpha1 "github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	versioned "github.com/sm43/sync/pkg/client/clientset/versioned"
+	typedsamplesv1alpha1 "github.com/sm43/sync/pkg/client/clientset/versioned/typed/samples/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	unstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -36,9 +39,6 @@ import (
 	injection "knative.dev/pkg/injection"
 	dynamicclient "knative.dev/pkg/injection/clients/dynamicclient"
 	logging "knative.dev/pkg/logging"
-	v1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	versioned "knative.dev/sample-controller/pkg/client/clientset/versioned"
-	typedsamplesv1alpha1 "knative.dev/sample-controller/pkg/client/clientset/versioned/typed/samples/v1alpha1"
 )
 
 func init() {
@@ -66,10 +66,10 @@ func Get(ctx context.Context) versioned.Interface {
 	if untyped == nil {
 		if injection.GetConfig(ctx) == nil {
 			logging.FromContext(ctx).Panic(
-				"Unable to fetch knative.dev/sample-controller/pkg/client/clientset/versioned.Interface from context. This context is not the application context (which is typically given to constructors via sharedmain).")
+				"Unable to fetch github.com/sm43/sync/pkg/client/clientset/versioned.Interface from context. This context is not the application context (which is typically given to constructors via sharedmain).")
 		} else {
 			logging.FromContext(ctx).Panic(
-				"Unable to fetch knative.dev/sample-controller/pkg/client/clientset/versioned.Interface from context.")
+				"Unable to fetch github.com/sm43/sync/pkg/client/clientset/versioned.Interface from context.")
 		}
 	}
 	return untyped.(versioned.Interface)

@@ -23,6 +23,9 @@ import (
 	json "encoding/json"
 	fmt "fmt"
 
+	v1alpha1 "github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	versioned "github.com/sm43/sync/pkg/client/clientset/versioned"
+	samplesv1alpha1 "github.com/sm43/sync/pkg/client/listers/samples/v1alpha1"
 	zap "go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
 	equality "k8s.io/apimachinery/pkg/api/equality"
@@ -36,9 +39,6 @@ import (
 	kmp "knative.dev/pkg/kmp"
 	logging "knative.dev/pkg/logging"
 	reconciler "knative.dev/pkg/reconciler"
-	v1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	versioned "knative.dev/sample-controller/pkg/client/clientset/versioned"
-	samplesv1alpha1 "knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1"
 )
 
 // Interface defines the strongly typed interfaces to be implemented by a

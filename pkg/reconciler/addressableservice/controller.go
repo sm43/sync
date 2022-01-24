@@ -23,9 +23,9 @@ import (
 	"knative.dev/pkg/configmap"
 	"knative.dev/pkg/controller"
 
+	addressableserviceinformer "github.com/sm43/sync/pkg/client/injection/informers/samples/v1alpha1/addressableservice"
+	addressableservicereconciler "github.com/sm43/sync/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice"
 	svcinformer "knative.dev/pkg/client/injection/kube/informers/core/v1/service"
-	addressableserviceinformer "knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/addressableservice"
-	addressableservicereconciler "knative.dev/sample-controller/pkg/client/injection/reconciler/samples/v1alpha1/addressableservice"
 )
 
 // NewController creates a Reconciler and returns the result of NewImpl.

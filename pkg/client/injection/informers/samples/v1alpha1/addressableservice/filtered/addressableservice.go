@@ -21,18 +21,18 @@ package filtered
 import (
 	context "context"
 
+	apissamplesv1alpha1 "github.com/sm43/sync/pkg/apis/samples/v1alpha1"
+	versioned "github.com/sm43/sync/pkg/client/clientset/versioned"
+	v1alpha1 "github.com/sm43/sync/pkg/client/informers/externalversions/samples/v1alpha1"
+	client "github.com/sm43/sync/pkg/client/injection/client"
+	filtered "github.com/sm43/sync/pkg/client/injection/informers/factory/filtered"
+	samplesv1alpha1 "github.com/sm43/sync/pkg/client/listers/samples/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
 	cache "k8s.io/client-go/tools/cache"
 	controller "knative.dev/pkg/controller"
 	injection "knative.dev/pkg/injection"
 	logging "knative.dev/pkg/logging"
-	apissamplesv1alpha1 "knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
-	versioned "knative.dev/sample-controller/pkg/client/clientset/versioned"
-	v1alpha1 "knative.dev/sample-controller/pkg/client/informers/externalversions/samples/v1alpha1"
-	client "knative.dev/sample-controller/pkg/client/injection/client"
-	filtered "knative.dev/sample-controller/pkg/client/injection/informers/factory/filtered"
-	samplesv1alpha1 "knative.dev/sample-controller/pkg/client/listers/samples/v1alpha1"
 )
 
 func init() {
@@ -81,7 +81,7 @@ func Get(ctx context.Context, selector string) v1alpha1.AddressableServiceInform
 	untyped := ctx.Value(Key{Selector: selector})
 	if untyped == nil {
 		logging.FromContext(ctx).Panicf(
-			"Unable to fetch knative.dev/sample-controller/pkg/client/informers/externalversions/samples/v1alpha1.AddressableServiceInformer with selector %s from context.", selector)
+			"Unable to fetch github.com/sm43/sync/pkg/client/informers/externalversions/samples/v1alpha1.AddressableServiceInformer with selector %s from context.", selector)
 	}
 	return untyped.(v1alpha1.AddressableServiceInformer)
 }

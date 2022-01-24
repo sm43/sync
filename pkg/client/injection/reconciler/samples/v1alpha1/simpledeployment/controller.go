@@ -24,6 +24,9 @@ import (
 	reflect "reflect"
 	strings "strings"
 
+	versionedscheme "github.com/sm43/sync/pkg/client/clientset/versioned/scheme"
+	client "github.com/sm43/sync/pkg/client/injection/client"
+	simpledeployment "github.com/sm43/sync/pkg/client/injection/informers/samples/v1alpha1/simpledeployment"
 	zap "go.uber.org/zap"
 	corev1 "k8s.io/api/core/v1"
 	labels "k8s.io/apimachinery/pkg/labels"
@@ -37,9 +40,6 @@ import (
 	logging "knative.dev/pkg/logging"
 	logkey "knative.dev/pkg/logging/logkey"
 	reconciler "knative.dev/pkg/reconciler"
-	versionedscheme "knative.dev/sample-controller/pkg/client/clientset/versioned/scheme"
-	client "knative.dev/sample-controller/pkg/client/injection/client"
-	simpledeployment "knative.dev/sample-controller/pkg/client/injection/informers/samples/v1alpha1/simpledeployment"
 )
 
 const (

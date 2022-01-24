@@ -1,4 +1,4 @@
-module knative.dev/sample-controller
+module github.com/sm43/sync
 
 go 1.15
 

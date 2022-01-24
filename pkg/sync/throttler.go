@@ -8,7 +8,7 @@ import (
 
 	"k8s.io/client-go/tools/cache"
 
-	"knative.dev/sample-controller/pkg/apis/samples/v1alpha1"
+	"github.com/sm43/sync/pkg/apis/samples/v1alpha1"
 )
 
 ////go:generate mockery --name=Throttler
